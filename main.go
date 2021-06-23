@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"MessengerDemo/mongodb"
+	"fmt"
+)
 
 func main() {
 
@@ -8,6 +11,7 @@ func main() {
 	//edata, _ := encryptionService.Encrypt()
 	//encryptionService.Decrypt(edata)
 	//KeyGen()
-	UserProfile()
+	RegisterUserProfile()
+	mongodb.CreateGroup()
 	fmt.Println("Finished")
 }

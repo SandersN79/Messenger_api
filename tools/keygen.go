@@ -1,9 +1,8 @@
-package main
+package mongodb
 
 import (
 	crand "crypto/rand"
 	"encoding/binary"
-	"fmt"
 	"log"
 	"math/rand"
 	"strconv"
@@ -28,7 +27,7 @@ func KeyGen() string {
 		count = count + 1
 	}
 	UserKey := strconv.Itoa(key1) + " " + strconv.Itoa(key2) + " " + strconv.Itoa(key3)
-	fmt.Println(UserKey)
+	//fmt.Println(UserKey)
 	return UserKey
 }
 
