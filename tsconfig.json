@@ -1,0 +1,16 @@
+{
+    "MongoURI": "mongodb+srv://Admin:<password>@cluster0.swkzu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    "Secret":  "secretstring",
+    "Database": "MessengerDev",
+    "MasterAdminUsername": "Admin",
+    "MasterAdminEmail": "admin@example.com",
+    "MasterAdminInitialPassword": "ME1lRBdqSjYCMlwr",
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "sourceMap": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
