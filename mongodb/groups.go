@@ -1,6 +1,7 @@
-package main
+package mongodb
 
 import (
+	"MessengerDemo/tools"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -15,11 +16,11 @@ type Groups struct {
 }
 
 func CreateGroup() string {
-	Group := Groups {
-		Id:            UuidGen(),
-		Name:          "test",
-		Type:          "test",
-		Created:       time.Now(),
+	Group := Groups{
+		Id:      tools.UuidGen(),
+		Name:    "test",
+		Type:    "test",
+		Created: time.Now(),
 	}
 	var jsonData []byte
 	jsonData, err := json.Marshal(Group)

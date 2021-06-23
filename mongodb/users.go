@@ -1,9 +1,9 @@
-package main
+package mongodb
 
 import (
+	"MessengerDemo/tools"
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
 	"log"
 	"time"
 )
@@ -19,16 +19,12 @@ type Users struct {
 	Created     time.Time
 }
 
-func UuidGen() string {
-	Uuid := uuid.New().String()
-	return Uuid
-}
 
 func RegisterUserProfile() string {
-	User := Users {
-		Id:            UuidGen(),
-		UUserKey:      KeyGen(),
-		Username:      "Admin",
+	User := Users{
+		Id:       tools.UuidGen(),
+		UUserKey: tools.KeyGen(),
+		Username: "Admin",
 		//GroupIds:    "test",
 		//GroupRoles:  "test",
 		Email:         "Admin@test",

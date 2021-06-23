@@ -1,4 +1,4 @@
-package mongodb
+package tools
 
 import (
 	crand "crypto/rand"

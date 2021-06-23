@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"codegen-api/src/rest_api/pkg/configuration"

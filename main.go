@@ -11,7 +11,7 @@ func main() {
 	//edata, _ := encryptionService.Encrypt()
 	//encryptionService.Decrypt(edata)
 	//KeyGen()
-	RegisterUserProfile()
+	mongodb.RegisterUserProfile()
 	mongodb.CreateGroup()
 	fmt.Println("Finished")
 }
