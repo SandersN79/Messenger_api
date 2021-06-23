@@ -17,10 +17,10 @@ type Groups struct {
 
 func CreateGroup() string {
 	Group := Groups{
-		Id:      tools.UuidGen(),
-		Name:    "test",
-		Type:    "test",
-		Created: time.Now(),
+		Id:       tools.UuidGen(),
+		Name:     "test",
+		Type:     "test",
+		Created:  time.Now(),
 	}
 	var jsonData []byte
 	jsonData, err := json.Marshal(Group)
