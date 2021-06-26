@@ -1,35 +1,31 @@
 package mongodb
 
-import (
-	"MessengerDemo/tools"
-	"encoding/json"
-	"fmt"
-	"log"
-	"time"
-)
+import "MessengerDemo/server"
 
-type Messages struct {
-	Id            string
-	SenderId      string
-	ReceiverId    string
-	Contents      string //[]byte
-	Created       time.Time
+type messages struct {
+	Id            string        `bson:"_id,omitempty"`
+	SenderId      string        `bson:"SenderId,omitempty"`
+	ReceiverId    string        `bson:"ReceiverId,omitempty"`
+	Contents      string        `bson:"Contents,omitempty"`  //[]byte
+	Created       string        `bson:"Created,omitempty"`
 }
 
-func CreateMessageForm() string {
-	Message := Messages{
-		Id:          tools.UuidGen(),
-		SenderId:    "Sender's UUID",
-		ReceiverId:  "Receiver or group's UUID",
-		Contents:    "edata from server.go",
-		Created:     time.Now(),
+func newMessageModel(u server.Message) *messages {
+	return &messages{
+		Id:              u.Id,
+		SenderId:        u.SenderId,
+		ReceiverId:      u.ReceiverId,
+		Contents:        u.Contents,
+		Created:         u.Created,
 	}
-	var jsonData []byte
-	jsonData, err := json.Marshal(Message)
-	if err != nil {
-		log.Println(err)
+}
+
+func (u *messages) toRootMessage() server.Message {
+	return server.Message{
+		Id:              u.Id,
+		SenderId:        u.SenderId,
+		ReceiverId:      u.ReceiverId,
+		Contents:        u.Contents,
+		Created:         u.Created,
 	}
-	MessageForm := string(jsonData)
-	fmt.Println(MessageForm)
-	return MessageForm
 }

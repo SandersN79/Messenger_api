@@ -1,42 +1,48 @@
 package mongodb
 
 import (
-	"MessengerDemo/tools"
-	"encoding/json"
-	"fmt"
-	"log"
-	"time"
+	"MessengerDemo/server"
 )
 
-type Users struct {
-	Id          string
-	UUserKey    string
-	Username    string
-	//GroupIds    []string
-	//GroupRoles  []string
-	Email       string
-	Password    string
-	Created     time.Time
+
+
+type users struct {
+	Id          string        `bson:"_id,omitempty"`
+	UUserKey    string        `bson:"UUserKey,omitempty"`
+	Username    string        `bson:"Username,omitempty"`
+	SystemRole  string        `bson:"SystemRole,omitempty"`
+	//GroupIds    []string    `bson:"GroupIds,omitempty"`
+	//GroupRoles  []string    `bson:"GroupRoles,omitempty"`
+	Email       string        `bson:"Email,omitempty"`
+	Password    string        `bson:"Password,omitempty"`
+	Created     string        `bson:"Created,omitempty"`
 }
 
 
-func RegisterUserProfile() string {
-	User := Users{
-		Id:       tools.UuidGen(),
-		UUserKey: tools.KeyGen(),
-		Username: "Admin",
-		//GroupIds:    "test",
-		//GroupRoles:  "test",
-		Email:         "Admin@test",
-		Password:      "null",
-		Created:       time.Now(),
+func newUserModel(u server.User) *users {
+	return &users{
+		Id:              u.Id,
+		UUserKey:        u.UUserKey,
+		Username:        u.Username,
+		SystemRole:      u.SystemRole,
+		//GroupRoles:      u.GroupRoles,
+		//GroupIds:        u.GroupIds,
+		Email:           u.Email,
+		Password:        u.Password,
+		Created:         u.Created,
 	}
-	var jsonData []byte
-	jsonData, err := json.Marshal(User)
-	if err != nil {
-		log.Println(err)
+}
+
+func (u *users) toRootUser() server.User {
+	return server.User{
+		Id:              u.Id,
+		UUserKey:        u.UUserKey,
+		Username:        u.Username,
+		SystemRole:      u.SystemRole,
+		//GroupRoles:      u.GroupRoles,
+		//GroupIds:        u.GroupIds,
+		Email:           u.Email,
+		Password:        u.Password,
+		Created:         u.Created,
 	}
-	UserAccount := string(jsonData)
-	fmt.Println(UserAccount)
-	return UserAccount
 }

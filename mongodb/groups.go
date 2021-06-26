@@ -1,33 +1,28 @@
 package mongodb
 
-import (
-	"MessengerDemo/tools"
-	"encoding/json"
-	"fmt"
-	"log"
-	"time"
-)
+import "MessengerDemo/server"
 
-type Groups struct {
-	Id          string
-	Name        string
-	Type        string
-	Created     time.Time
+type groups struct {
+	Id          string        `bson:"_id,omitempty"`
+	Name        string        `bson:"Name,omitempty"`
+	Type        string        `bson:"Type,omitempty"`
+	Created     string        `bson:"Created,omitempty"`
 }
 
-func CreateGroup() string {
-	Group := Groups{
-		Id:       tools.UuidGen(),
-		Name:     "test",
-		Type:     "test",
-		Created:  time.Now(),
+func newGroupModel(u server.Group) *groups {
+	return &groups{
+		Id:        u.Id,
+		Name:      u.Name,
+		Type:      u.Type,
+		Created:   u.Created,
 	}
-	var jsonData []byte
-	jsonData, err := json.Marshal(Group)
-	if err != nil {
-		log.Println(err)
+}
+
+func (u *groups) toRootGroup() server.Group {
+	return server.Group{
+		Id:        u.Id,
+		Name:      u.Name,
+		Type:      u.Type,
+		Created:   u.Created,
 	}
-	GroupData := string(jsonData)
-	fmt.Println(GroupData)
-	return GroupData
 }
