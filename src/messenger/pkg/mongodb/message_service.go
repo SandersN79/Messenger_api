@@ -1,18 +1,18 @@
 package mongodb
 
 import (
-	"MessengerDemo/tools"
+	core "MessengerDemo/src/messenger/pkg"
 	"encoding/json"
 	"fmt"
 	"log"
 )
 
 func CreateMessageForm() string {
-	Message := Messages{
-		Id:          tools.UuidGen(),
+	Message := messages{
+		Id:          core.UuidGen(),
 		SenderId:    "Sender's UUID",
 		ReceiverId:  "Receiver or group's UUID",
-		Contents:    "edata from server.go",
+		Contents:    []byte("edata from server.go"),
 		Created:     "test",
 	}
 	var jsonData []byte

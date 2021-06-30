@@ -1,7 +1,7 @@
 package mongodb
 
 import (
-	"MessengerDemo/server"
+	core "MessengerDemo/src/messenger/pkg"
 )
 
 
@@ -19,7 +19,7 @@ type users struct {
 }
 
 
-func newUserModel(u server.User) *users {
+func newUserModel(u core.User) *users {
 	return &users{
 		Id:              u.Id,
 		UUserKey:        u.UUserKey,
@@ -33,8 +33,8 @@ func newUserModel(u server.User) *users {
 	}
 }
 
-func (u *users) toRootUser() server.User {
-	return server.User{
+func (u *users) toRootUser() core.User {
+	return core.User{
 		Id:              u.Id,
 		UUserKey:        u.UUserKey,
 		Username:        u.Username,

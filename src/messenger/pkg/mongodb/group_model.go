@@ -1,6 +1,6 @@
 package mongodb
 
-import "MessengerDemo/server"
+import core "MessengerDemo/src/messenger/pkg"
 
 type groups struct {
 	Id          string        `bson:"_id,omitempty"`
@@ -9,7 +9,7 @@ type groups struct {
 	Created     string        `bson:"Created,omitempty"`
 }
 
-func newGroupModel(u server.Group) *groups {
+func newGroupModel(u core.Group) *groups {
 	return &groups{
 		Id:        u.Id,
 		Name:      u.Name,
@@ -18,8 +18,8 @@ func newGroupModel(u server.Group) *groups {
 	}
 }
 
-func (u *groups) toRootGroup() server.Group {
-	return server.Group{
+func (u *groups) toRootGroup() core.Group {
+	return core.Group{
 		Id:        u.Id,
 		Name:      u.Name,
 		Type:      u.Type,

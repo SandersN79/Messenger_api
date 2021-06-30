@@ -1,7 +1,7 @@
 package mongodb
 
 import (
-	"MessengerDemo/server"
+	core "MessengerDemo/src/messenger/pkg"
 	"github.com/gofrs/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
@@ -19,41 +19,39 @@ func NewUserService(db *DBService) *UserService {
 }
 
 // AuthenticateUser is used to authenticate users that are signing in
-func (p *UserService) AuthenticateUser(user server.User) server.User {
-	serverUser := p.db.FindOneUser(bson.D{{"username", user.Username}})
+func (p *UserService) AuthenticateUser(user core.User) core.User {
+	coreUser := p.db.FindOneUser(bson.D{{"Email", user.Email}})
 	password := []byte(user.Password)
-	checkPassword := []byte(serverUser.Password)
+	checkPassword := []byte(coreUser.Password)
 	err := bcrypt.CompareHashAndPassword(checkPassword, password)
 	if err == nil {
-		return serverUser
+		return coreUser
 	}
-	return server.User{Password: "Incorrect"}
+	return core.User{Password: "Incorrect"}
 }
 
-/*
+
 // BlacklistAuthToken is used during signout to add the now invalid auth-token/api key to the blacklist collection
 func (p *UserService) BlacklistAuthToken(authToken string) {
-	var blacklist server.Blacklist
+	var blacklist core.Blacklist
 	blacklist.AuthToken = authToken
 	currentTime := time.Now().UTC()
-	blacklist.LastModified = currentTime.String()
-	blacklist.CreationDatetime = currentTime.String()
+	blacklist.Created = currentTime.String()
 	p.db.BlacklistToken(blacklist)
 }
 
 // RefreshToken is used to refresh an existing & valid JWT token
-func (p *UserService) RefreshToken(tokenData []string, groupUuid string) server.User {
+func (p *UserService) RefreshToken(tokenData []string) core.User {
 	if tokenData[0] == "" {
-		return server.User{Uuid: ""}
+		return core.User{Id: ""}
 	}
 	userUuid := tokenData[0]
-	user := p.UserFind(userUuid, groupUuid)
+	user := p.UserFind(userUuid)
 	return user
 }
-*/
 
 // UpdatePassword is used to update the currently logged in user's password
-func (p *UserService) UpdatePassword(tokenData []string, CurrentPassword string, newPassword string) server.User {
+func (p *UserService) UpdatePassword(tokenData []string, CurrentPassword string, newPassword string) core.User {
 	userUuid := tokenData[0]
 	curUser := p.db.FindOneUser(bson.D{{"id", userUuid}})
 	password := []byte(CurrentPassword)
@@ -61,30 +59,28 @@ func (p *UserService) UpdatePassword(tokenData []string, CurrentPassword string,
 	err := bcrypt.CompareHashAndPassword(checkPassword, password)
 	if err == nil {
 		// 3. Update doc with new password
-		currentTime := time.Now().UTC()
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
 		if err != nil {
 			panic(err)
 		}
-		filter := bson.D{{"uuid", curUser.Id}}
+		filter := bson.D{{"Id", curUser.Id}}
 		update := bson.D{{"$set",
 			bson.D{
-				{"password", string(hashedPassword)},
-				{"last_modified", currentTime.String()},
+				{"Password", string(hashedPassword)},
 			},
 		}}
 		return p.db.UpdateUser(update, filter)
 	}
-	return server.User{Password: "Incorrect"}
+	return core.User{Password: "Incorrect"}
 }
 
 // UserCreate is used to create a new user
-func (p *UserService) UserCreate(user server.User) server.User {
+func (p *UserService) UserCreate(user core.User) core.User {
 	docCount := p.db.CountUsers(bson.D{})
 	checkUserEmail := p.db.FindOneUser(bson.D{{"Email", user.Email}})
 
 	if checkUserEmail.Username != "NotFound" {
-		return server.User{Email: "Taken"}
+		return core.User{Email: "Taken"}
 	}
 	curid, err := uuid.NewV4()
 	if err != nil {
@@ -108,46 +104,43 @@ func (p *UserService) UserCreate(user server.User) server.User {
 }
 
 // UserDelete is used to delete an user
-func (p *UserService) UserDelete(id string) server.User {
+func (p *UserService) UserDelete(id string) core.User {
 	return p.db.DeleteUser(bson.D{{"Id", id}})
 }
 //TODO change group_uuid to group_uuids
 // UsersFind is used to find all user docs
-func (p *UserService) UsersFind(groupUuid string) []server.User {
+func (p *UserService) UsersFind(groupIds []string) []core.User {
 	findFilter := bson.D{}
-	if groupUuid != "" {
-		findFilter = bson.D{{"group_uuid", groupUuid}}
-	}
+	findFilter = bson.D{{}}
 	return p.db.FindUsers(findFilter)
 }
 
 // UserFind is used to find a specific user doc
-func (p *UserService) UserFind(id string) server.User {
-	findFilter := bson.D{{"uuid", id}}
+func (p *UserService) UserFind(id string) core.User {
+	findFilter := bson.D{{"Id", id}}
 	return p.db.FindOneUser(findFilter)
 }
 
 // UserUpdate is used to update an existing user doc
-func (p *UserService) UserUpdate(user server.User) server.User {
+func (p *UserService) UserUpdate(user core.User) core.User {
 	docCount := p.db.CountUsers(bson.D{})
 	findFilter := bson.D{{"Id", user.Id}}
 	curUser := p.db.FindOneUser(findFilter)
 	if curUser.Username == "NotFound" {
-		return server.User{Id: "Not Found"}
+		return core.User{Id: "Not Found"}
 	}
-	checkUser := p.db.FindOneUser(bson.D{{"username", user.Username}})
-	checkUserEmail := p.db.FindOneUser(bson.D{{"email", user.Email}})
+	checkUser := p.db.FindOneUser(bson.D{{"Username", user.Username}})
+	checkUserEmail := p.db.FindOneUser(bson.D{{"Email", user.Email}})
 	user = BaseModifyUser(user, newUserModel(curUser))
 	if checkUser.Username != "NotFound" && curUser.Username != user.Username {
-		return server.User{Username: "Taken"}
+		return core.User{Username: "Taken"}
 	} else if checkUserEmail.Username != "NotFound" && curUser.Email != user.Email {
-		return server.User{Email: "Taken"}
+		return core.User{Email: "Taken"}
 	}
 	if docCount == 0 {
-		return server.User{Id: "NotFound"}
+		return core.User{Id: "NotFound"}
 	}
-	filter := bson.D{{"uuid", user.Id}}
-	currentTime := time.Now().UTC()
+	filter := bson.D{{"Id", user.Id}}
 	if len(user.Password) != 0 {
 		password := []byte(user.Password)
 		hashedPassword, hashErr := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
@@ -156,11 +149,9 @@ func (p *UserService) UserUpdate(user server.User) server.User {
 		}
 		update := bson.D{{"$set",
 			bson.D{
-				{"password", string(hashedPassword)},
-
-				{"username", user.Username},
-				{"email", user.Email},
-				{"last_modified", currentTime.String()},
+				{"Password", string(hashedPassword)},
+				{"Username", user.Username},
+				{"Email", user.Email},
 			},
 		}}
 		p.db.UpdateUser(update, filter)
@@ -169,10 +160,8 @@ func (p *UserService) UserUpdate(user server.User) server.User {
 	}
 	update := bson.D{{"$set",
 		bson.D{
-
-			{"username", user.Username},
-			{"email", user.Email},
-			{"last_modified", currentTime.String()},
+			{"Username", user.Username},
+			{"Email", user.Email},
 		},
 	}}
 	p.db.UpdateUser(update, filter)
@@ -180,7 +169,7 @@ func (p *UserService) UserUpdate(user server.User) server.User {
 }
 
 // UserDocInsert is used to insert an user doc directly into mongodb for testing purposes
-func (p *UserService) UserDocInsert(user server.User) server.User {
+func (p *UserService) UserDocInsert(user core.User) core.User {
 	password := []byte(user.Password)
 	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	if err != nil {
@@ -192,7 +181,7 @@ func (p *UserService) UserDocInsert(user server.User) server.User {
 
 
 // BaseModifyUser is a function that setups the base user struct during a user modification request
-func BaseModifyUser(user server.User, curUser *users) server.User {
+func BaseModifyUser(user core.User, curUser *users) core.User {
 	if len(user.Username) == 0 {
 		user.Username = curUser.Username
 	}

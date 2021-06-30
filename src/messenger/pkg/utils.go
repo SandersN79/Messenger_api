@@ -1,12 +1,18 @@
-package tools
+package core
 
 import (
 	crand "crypto/rand"
 	"encoding/binary"
+	"github.com/google/uuid"
 	"log"
 	"math/rand"
 	"strconv"
 )
+
+func UuidGen() string {
+	Uuid := uuid.New().String()
+	return Uuid
+}
 
 func KeyGen() string {
 	src := &cryptoSource{}

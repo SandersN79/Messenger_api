@@ -1,16 +1,16 @@
 package mongodb
 
-import "MessengerDemo/server"
+import core "MessengerDemo/src/messenger/pkg"
 
 type messages struct {
 	Id            string        `bson:"_id,omitempty"`
 	SenderId      string        `bson:"SenderId,omitempty"`
 	ReceiverId    string        `bson:"ReceiverId,omitempty"`
-	Contents      string        `bson:"Contents,omitempty"`  //[]byte
+	Contents      []byte        `bson:"Contents,omitempty"`  //[]byte
 	Created       string        `bson:"Created,omitempty"`
 }
 
-func newMessageModel(u server.Message) *messages {
+func newMessageModel(u core.Message) *messages {
 	return &messages{
 		Id:              u.Id,
 		SenderId:        u.SenderId,
@@ -20,8 +20,8 @@ func newMessageModel(u server.Message) *messages {
 	}
 }
 
-func (u *messages) toRootMessage() server.Message {
-	return server.Message{
+func (u *messages) toRootMessage() core.Message {
+	return core.Message{
 		Id:              u.Id,
 		SenderId:        u.SenderId,
 		ReceiverId:      u.ReceiverId,

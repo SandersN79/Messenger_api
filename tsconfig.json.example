@@ -5,6 +5,10 @@
     "MasterAdminUsername": "Admin",
     "MasterAdminEmail": "admin@example.com",
     "MasterAdminInitialPassword": "ME1lRBdqSjYCMlwr",
+    "Registration": "on",
+    "Host": "127.0.0.1",
+    "Port": "9999",
+    "DBName": "test",
   "compilerOptions": {
     "module": "commonjs",
     "target": "es5",

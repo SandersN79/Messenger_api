@@ -1,7 +1,7 @@
 package mongodb
 
 import (
-	"MessengerDemo/server"
+	core "MessengerDemo/src/messenger/pkg"
 	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
@@ -39,53 +39,53 @@ func NewDBService(client *mongo.Client, dbName string) *DBService {
 
 
 // FindOneUser Function to get a user from datasource with custom filter
-func (p *DBService) FindOneUser(filter bson.D) server.User {
-	var model = newUserModel(server.User{})
+func (p *DBService) FindOneUser(filter bson.D) core.User {
+	var model = newUserModel(core.User{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	err := p.usersCollection.FindOne(ctx, filter).Decode(&model)
 	if err != nil {
-		return server.User{Username: "NotFound"}
+		return core.User{Username: "NotFound"}
 	}
 	return model.toRootUser()
 }
 
 // FindUsers Function to get a company from datasource with custom filter
-func (p *DBService) FindUsers(filter bson.D) []server.User {
-	var serverStructs []server.User
+func (p *DBService) FindUsers(filter bson.D) []core.User {
+	var coreStructs []core.User
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	cursor, err := p.usersCollection.Find(ctx, filter)
 	if err != nil {
 		defer cursor.Close(ctx)
-		return serverStructs
+		return coreStructs
 	}
 	for cursor.Next(ctx) {
-		result := newUserModel(server.User{})
+		result := newUserModel(core.User{})
 		err := cursor.Decode(&result)
 		if err != nil {
 			fmt.Println("cursor.Next() error:", err)
 			panic(err)
 		} else {
 			result.Password = ""
-			serverStructs = append(serverStructs, result.toRootUser())
+			coreStructs = append(coreStructs, result.toRootUser())
 		}
 	}
-	return serverStructs
+	return coreStructs
 }
 
 // CreateUser is used to create a new user user
-func (p *DBService) CreateUser(serverStruct server.User) server.User {
-	var check = newUserModel(server.User{})
+func (p *DBService) CreateUser(coreStruct core.User) core.User {
+	var check = newUserModel(core.User{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	nameErr := p.usersCollection.FindOne(ctx, bson.M{"username": serverStruct.Username}).Decode(&check)
+	nameErr := p.usersCollection.FindOne(ctx, bson.M{"username": coreStruct.Username}).Decode(&check)
 	if nameErr == nil {
-		return server.User{Username: "Taken"}
+		return core.User{Username: "Taken"}
 	}
 	currentTime := time.Now().UTC()
-	serverStruct.Created = currentTime.String()
-	model := newUserModel(serverStruct)
+	coreStruct.Created = currentTime.String()
+	model := newUserModel(coreStruct)
 	_, err := p.usersCollection.InsertOne(ctx, model)
 	if err != nil {
 		fmt.Println("user doc creation error err: ", err)
@@ -94,32 +94,32 @@ func (p *DBService) CreateUser(serverStruct server.User) server.User {
 }
 
 // UpdateUser is used to create a new user user
-func (p *DBService) UpdateUser(update bson.D, filter bson.D) server.User {
+func (p *DBService) UpdateUser(update bson.D, filter bson.D) core.User {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	_, err := p.usersCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		fmt.Println("update err: ", err)
-		return server.User{Username: "Error"}
+		return core.User{Username: "Error"}
 	}
-	return server.User{Username: "Success"}
+	return core.User{Username: "Success"}
 }
 
 // DeleteUser is used to create a new user user
-func (p *DBService) DeleteUser(filter bson.D) server.User {
-	var model = newUserModel(server.User{})
+func (p *DBService) DeleteUser(filter bson.D) core.User {
+	var model = newUserModel(core.User{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	err := p.usersCollection.FindOneAndDelete(ctx, filter).Decode(&model)
 	if err != nil {
-		return server.User{}
+		return core.User{}
 	}
 	return model.toRootUser()
 }
 
 // InsertUser
-func (p *DBService) InsertUser(serverStruct server.User) server.User {
-	var model = newUserModel(serverStruct)
+func (p *DBService) InsertUser(coreStruct core.User) core.User {
+	var model = newUserModel(coreStruct)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	_, err := p.usersCollection.InsertOne(ctx, model)
@@ -144,52 +144,52 @@ func (p *DBService) CountUsers(filter bson.D) int64 {
 
 
 // FindOneGroup Function to get a group from datasource with custom filter
-func (p *DBService) FindOneGroup(filter bson.D) server.Group {
-	var model = newGroupModel(server.Group{})
+func (p *DBService) FindOneGroup(filter bson.D) core.Group {
+	var model = newGroupModel(core.Group{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	err := p.groupsCollection.FindOne(ctx, filter).Decode(&model)
 	if err != nil {
-		return server.Group{Name: "NotFound"}
+		return core.Group{Name: "NotFound"}
 	}
 	return model.toRootGroup()
 }
 
 // FindGroups Function to get a company from datasource with custom filter
-func (p *DBService) FindGroups(filter bson.D) []server.Group {
-	var serverStructs []server.Group
+func (p *DBService) FindGroups(filter bson.D) []core.Group {
+	var coreStructs []core.Group
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	cursor, err := p.groupsCollection.Find(ctx, filter)
 	if err != nil {
 		defer cursor.Close(ctx)
-		return serverStructs
+		return coreStructs
 	}
 	for cursor.Next(ctx) {
-		result := newGroupModel(server.Group{})
+		result := newGroupModel(core.Group{})
 		err := cursor.Decode(&result)
 		if err != nil {
 			fmt.Println("cursor.Next() error:", err)
 			panic(err)
 		} else {
-			serverStructs = append(serverStructs, result.toRootGroup())
+			coreStructs = append(coreStructs, result.toRootGroup())
 		}
 	}
-	return serverStructs
+	return coreStructs
 }
 
 // CreateGroup is used to create a new group group
-func (p *DBService) CreateGroup(serverStruct server.Group) server.Group {
-	var check = newGroupModel(server.Group{})
+func (p *DBService) CreateGroup(coreStruct core.Group) core.Group {
+	var check = newGroupModel(core.Group{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	nameErr := p.groupsCollection.FindOne(ctx, bson.M{"Name": serverStruct.Name}).Decode(&check)
+	nameErr := p.groupsCollection.FindOne(ctx, bson.M{"Name": coreStruct.Name}).Decode(&check)
 	if nameErr == nil {
-		return server.Group{Name: "Taken"}
+		return core.Group{Name: "Taken"}
 	}
 	currentTime := time.Now().UTC()
-	serverStruct.Created = currentTime.String()
-	model := newGroupModel(serverStruct)
+	coreStruct.Created = currentTime.String()
+	model := newGroupModel(coreStruct)
 	_, err := p.groupsCollection.InsertOne(ctx, model)
 	if err != nil {
 		fmt.Println("group doc creation error err: ", err)
@@ -198,32 +198,32 @@ func (p *DBService) CreateGroup(serverStruct server.Group) server.Group {
 }
 
 // UpdateGroup is used to create a new group group
-func (p *DBService) UpdateGroup(update bson.D, filter bson.D) server.Group {
+func (p *DBService) UpdateGroup(update bson.D, filter bson.D) core.Group {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	_, err := p.groupsCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		fmt.Println("update err: ", err)
-		return server.Group{Name: "Error"}
+		return core.Group{Name: "Error"}
 	}
-	return server.Group{Name: "Success"}
+	return core.Group{Name: "Success"}
 }
 
 // DeleteGroup is used to create a new group group
-func (p *DBService) DeleteGroup(filter bson.D) server.Group {
-	var model = newGroupModel(server.Group{})
+func (p *DBService) DeleteGroup(filter bson.D) core.Group {
+	var model = newGroupModel(core.Group{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	err := p.groupsCollection.FindOneAndDelete(ctx, filter).Decode(&model)
 	if err != nil {
-		return server.Group{}
+		return core.Group{}
 	}
 	return model.toRootGroup()
 }
 
 // InsertGroup
-func (p *DBService) InsertGroup(serverStruct server.Group) server.Group {
-	var model = newGroupModel(serverStruct)
+func (p *DBService) InsertGroup(coreStruct core.Group) core.Group {
+	var model = newGroupModel(coreStruct)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	_, err := p.groupsCollection.InsertOne(ctx, model)
@@ -247,47 +247,47 @@ func (p *DBService) CountGroups(filter bson.D) int64 {
 
 
 // FindOneMessage Function to get a message from datasource with custom filter
-func (p *DBService) FindOneMessage(filter bson.D) server.Message {
-	var model = newMessageModel(server.Message{})
+func (p *DBService) FindOneMessage(filter bson.D) core.Message {
+	var model = newMessageModel(core.Message{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	err := p.messagesCollection.FindOne(ctx, filter).Decode(&model)
 	if err != nil {
-		return server.Message{Id: "NotFound"}
+		return core.Message{Id: "NotFound"}
 	}
 	return model.toRootMessage()
 }
 
 // FindMessages Function to get a company from datasource with custom filter
-func (p *DBService) FindMessages(filter bson.D) []server.Message {
-	var serverStructs []server.Message
+func (p *DBService) FindMessages(filter bson.D) []core.Message {
+	var coreStructs []core.Message
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	cursor, err := p.messagesCollection.Find(ctx, filter)
 	if err != nil {
 		defer cursor.Close(ctx)
-		return serverStructs
+		return coreStructs
 	}
 	for cursor.Next(ctx) {
-		result := newMessageModel(server.Message{})
+		result := newMessageModel(core.Message{})
 		err := cursor.Decode(&result)
 		if err != nil {
 			fmt.Println("cursor.Next() error:", err)
 			panic(err)
 		} else {
-			serverStructs = append(serverStructs, result.toRootMessage())
+			coreStructs = append(coreStructs, result.toRootMessage())
 		}
 	}
-	return serverStructs
+	return coreStructs
 }
 
 // CreateMessage is used to create a new message message
-func (p *DBService) CreateMessage(serverStruct server.Message) server.Message {
+func (p *DBService) CreateMessage(coreStruct core.Message) core.Message {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	currentTime := time.Now().UTC()
-	serverStruct.Created = currentTime.String()
-	model := newMessageModel(serverStruct)
+	coreStruct.Created = currentTime.String()
+	model := newMessageModel(coreStruct)
 	_, err := p.messagesCollection.InsertOne(ctx, model)
 	if err != nil {
 		fmt.Println("message doc creation error err: ", err)
@@ -296,32 +296,32 @@ func (p *DBService) CreateMessage(serverStruct server.Message) server.Message {
 }
 
 // UpdateMessage is used to create a new message message
-func (p *DBService) UpdateMessage(update bson.D, filter bson.D) server.Message {
+func (p *DBService) UpdateMessage(update bson.D, filter bson.D) core.Message {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	_, err := p.messagesCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		fmt.Println("update err: ", err)
-		return server.Message{Id: "Error"}
+		return core.Message{Id: "Error"}
 	}
-	return server.Message{Id: "Success"}
+	return core.Message{Id: "Success"}
 }
 
 // DeleteMessage is used to create a new message message
-func (p *DBService) DeleteMessage(filter bson.D) server.Message {
-	var model = newMessageModel(server.Message{})
+func (p *DBService) DeleteMessage(filter bson.D) core.Message {
+	var model = newMessageModel(core.Message{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	err := p.messagesCollection.FindOneAndDelete(ctx, filter).Decode(&model)
 	if err != nil {
-		return server.Message{}
+		return core.Message{}
 	}
 	return model.toRootMessage()
 }
 
 // InsertMessage
-func (p *DBService) InsertMessage(serverStruct server.Message) server.Message {
-	var model = newMessageModel(serverStruct)
+func (p *DBService) InsertMessage(coreStruct core.Message) core.Message {
+	var model = newMessageModel(coreStruct)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	_, err := p.messagesCollection.InsertOne(ctx, model)
@@ -340,4 +340,27 @@ func (p *DBService) CountMessages(filter bson.D) int64 {
 		return 0
 	}
 	return docCount
+}
+
+////////
+
+
+// BlacklistToken
+func (p *DBService) BlacklistToken(coreStruct core.Blacklist) {
+	model := newBlacklistModel(coreStruct)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	p.blacklistCollection.InsertOne(ctx, model)
+}
+
+// CheckBlacklist
+func (p *DBService) CheckBlacklist(authToken string) bool {
+	var checkToken core.Blacklist
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	blacklistErr := p.blacklistCollection.FindOne(ctx, bson.M{"auth_token": authToken}).Decode(&checkToken)
+	if blacklistErr != nil {
+		return false
+	}
+	return true
 }
