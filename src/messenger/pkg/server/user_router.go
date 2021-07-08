@@ -3,6 +3,7 @@ package server
 import (
 	core "MessengerDemo/src/messenger/pkg"
 	"encoding/json"
+	"fmt"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"io"
@@ -274,6 +275,7 @@ func (ur *userRouter) RegisterUser(w http.ResponseWriter, r *http.Request) {
 // Handler function that creates a new user
 func (ur *userRouter) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user core.User
+	fmt.Println(("We are here \n"))
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)
@@ -289,8 +291,8 @@ func (ur *userRouter) CreateUser(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	decodedToken := DecodeJWT(r.Header.Get("Auth-Token"))
-	groupUuid := AdminRouteRoleCheck(decodedToken)
-	user.GroupIds = append(user.GroupIds, groupUuid...)
+	groupUuids := AdminRouteRoleCheck(decodedToken)
+	user.GroupIds = append(user.GroupIds, groupUuids...)
 	u := ur.userService.UserCreate(user)
 	if u.Email == "Taken" {
 		w = SetResponseHeaders(w, "", "")

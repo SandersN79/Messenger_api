@@ -46,12 +46,12 @@ func (enc *EncryptionService) buildURL(urlType string) string {
 }
 
 // Evaluate sends the JIT to the Encryption API and generates an App's source code.
-func (enc *EncryptionService) Encrypt() ([]byte, error) {
+func (enc *EncryptionService) Encrypt(contents []byte) ([]byte, error) {
 	decURL := enc.buildURL("encrypt")
 	fmt.Println(decURL)
 	method := "POST"
 	headers := fetch.JSONDefaultHeaders()
-	cryptMessage := NewCryptMessage("1603 4702 613", []byte("this is a test abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+ABCDEFGHIJKLMNOPQRSTUVWXYZ<>?{}|,./;[]1234567890-="))
+	cryptMessage := NewCryptMessage("1603 4702 613", contents)
 	output := cryptMessage.ToJSON()
 	f, err := fetch.NewFetch(decURL, method, headers, bytes.NewBuffer([]byte(output)))
 	if err != nil {
@@ -80,13 +80,14 @@ func (enc *EncryptionService) Encrypt() ([]byte, error) {
 		//rdata := []rune(ddata)
 		//fmt.Println((ddata)[1])
 		fmt.Println("data:", ddata)
+		bdata = cleanJSON(bdata)
 		return bdata, nil
 	}
 	return []byte(""), nil
 }
 
 // Evaluate sends the JIT to the Encryption API and generates an App's source code.
-func (enc *EncryptionService) Decrypt(edata []byte) error {
+func (enc *EncryptionService) Decrypt(edata []byte) ([]byte, error) {
 	fmt.Println("decryption section \n")
 	decURL := enc.buildURL("decrypt")
 	method := "POST"
@@ -98,13 +99,13 @@ func (enc *EncryptionService) Decrypt(edata []byte) error {
 	f, err := fetch.NewFetch(decURL, method, headers, bytes.NewBuffer([]byte(output)))
 	if err != nil {
 		fmt.Println("decryption Service Failed: ", err.Error())
-		return err
+		return []byte{}, err
 	}
 	f.Execute("")
 	f.Resolve()
 	if f.Res == nil {
 		fmt.Println("error")
-		return nil
+		return []byte{}, nil
 	} else {
 		//fmt.Println(f.Res.Status, f.Res.Body)
 		defer f.Res.Body.Close()
@@ -112,17 +113,20 @@ func (enc *EncryptionService) Decrypt(edata []byte) error {
 		if err != nil {
 			fmt.Println("Failed to read decryption Response: ", err.Error())
 			log.Fatalf("Failed to read decryption Response: %v", err.Error())
-			return err
+			return []byte{}, err
 		}
 		str := base64.StdEncoding.EncodeToString(responseData)
 		//fmt.Println("str:", str)
 
 		bdata, err := base64.StdEncoding.DecodeString(str)
-		ddata := string(bdata)
-		fmt.Println("data:", ddata)
-		return nil
+		if err != nil {
+			return []byte{}, err
+		}
+		//ddata := string(bdata)
+		//fmt.Println("data:", ddata)
+		return bdata, nil
 	}
-	return nil
+	return []byte{}, nil
 }
 
 

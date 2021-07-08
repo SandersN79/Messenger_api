@@ -2,6 +2,7 @@ package server
 
 import (
 	"bytes"
+	"fmt"
 
 	"io"
 	"mime/multipart"
@@ -51,6 +52,7 @@ func SetResponseHeaders(w http.ResponseWriter, authToken string, apiKey string) 
 // AdminRouteRoleCheck checks admin routes JWT tokens to ensure that a group admin does not break scope
 func AdminRouteRoleCheck(decodedToken []string) []string {
 	var groupIds []string
+	fmt.Println("tokenUTILS:", decodedToken[2])
 	if decodedToken[2] != "Root" {
 		groupIds = append(groupIds, decodedToken[1])
 	}

@@ -42,8 +42,8 @@ func returnInitialCheckErrMsg(userErr string, groupErr string, s1 string, s2 str
 
 // verifyTokenUser verify Token User
 func verifyTokenUser(uuidSlice []string, db core.DBService) (bool, string) {
-	checkUser := db.FindOneUser(bson.D{{"Id", uuidSlice[0]}})
-	checkgroup := db.FindOneGroup(bson.D{{"Id", uuidSlice[1]}})
+	checkUser := db.FindOneUser(bson.D{{"_id", uuidSlice[0]}})
+	checkgroup := db.FindOneGroup(bson.D{{"_id", uuidSlice[1]}})
 	if checkUser.Username == "NotFound" || checkgroup.Name == "NotFound" {
 		return false, returnInitialCheckErrMsg(checkUser.Username, checkgroup.Name, "User", "group")
 	}
@@ -83,8 +83,11 @@ func tokenVerifyMiddleWare(roleType string, next http.HandlerFunc,
 		return
 	}
 	tokenClaims := token.Claims.(jwt.MapClaims)
+	fmt.Println("token", tokenClaims)
 	uuidSlice := []string{tokenClaims["Id"].(string), tokenClaims["GroupId"].(string)}
 	verified, verifyMsg := verifyTokenUser(uuidSlice, db)
+	fmt.Println("verified:", verified)
+	fmt.Println("verifyMSG:", verifyMsg)
 	if verified {
 		if token.Valid && roleType == "Admin" {
 			// TODO IF ADMIN CHECK USER ROLE

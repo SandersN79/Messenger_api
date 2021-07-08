@@ -3,7 +3,6 @@ package mongodb
 import (
 	core "MessengerDemo/src/messenger/pkg"
 	"go.mongodb.org/mongo-driver/bson"
-	"time"
 )
 
 
@@ -42,11 +41,11 @@ func (p *GroupService) GroupDelete(Id string) core.Group {
 func (p *GroupService) GroupUpdate(group core.Group) core.Group {
 	curGroup := p.db.FindOneGroup(bson.D{{"Id", group.Id}})
 	filter := bson.D{{"Id", curGroup.Id}}
-	currentTime := time.Now().UTC()
+	//currentTime := time.Now().UTC()
 	update := bson.D{{"$set",
 		bson.D{
-			{"name", group.Name},
-			{"last_modified", currentTime.String()},
+			{"Name", group.Name},
+			//{"last_modified", currentTime.String()},
 		},
 	}}
 	return p.db.UpdateGroup(update, filter)

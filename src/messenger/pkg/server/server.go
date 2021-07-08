@@ -15,20 +15,19 @@ type Server struct {
 	DBService         core.DBService
 	UserService       core.UserService
 	GroupService      core.GroupService
-	//MessageService    core.MessageService
+	MessageService    core.MessageService
 	EncryptionService *internals.EncryptionService
 }
 //(db core.DBService, u core.UserService, g core.GroupService, m core.MessageService, e *internals.EncryptionService)
-func NewServer(db core.DBService, u core.UserService, g core.GroupService, e *internals.EncryptionService) (error, *Server) {
+func NewServer(db core.DBService, u core.UserService, g core.GroupService, m core.MessageService, e *internals.EncryptionService) (error, *Server) {
 	var server Server
 	var err error
 	router := mux.NewRouter().StrictSlash(true)
 	router = NewUserRouter(db, u, g, router) //add u, g
 	router = NewGroupRouter(db, g, router)
-	//router = NewMessageRouter(db, m, e, router)
+	router = NewMessageRouter(db, m, e, router)
 	server = Server{
-		//Router: router, DBService: db, UserService: u, GroupService: g, MessageService: m, EncryptionService: e,
-		Router: router, DBService: db, UserService: u, GroupService: g, EncryptionService: e,
+		Router: router, DBService: db, UserService: u, GroupService: g, MessageService: m, EncryptionService: e,
 	}
 	return err, &server
 }

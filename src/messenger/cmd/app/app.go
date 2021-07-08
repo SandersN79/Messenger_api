@@ -35,6 +35,7 @@ func (a *App) Initialize(mode string) error {
 	db := mongodb.NewDBService(a.client, os.Getenv("DBNAME"))
 	g := mongodb.NewGroupService(db)
 	u := mongodb.NewUserService(db)
+	m := mongodb.NewMessageService(db)
 	var group core.Group
 	var adminUser core.User
 	curid, err := uuid.NewV4()
@@ -53,7 +54,7 @@ func (a *App) Initialize(mode string) error {
 		u.UserCreate(adminUser)
 	}
 	//NewServer(db core.DBService, u core.UserService, g core.GroupService, e *internals.EncryptionService) (error, *Server)
-	_, a.server = server.NewServer(db, u, g, e)
+	_, a.server = server.NewServer(db, u, g, m, e)
 	return nil
 }
 

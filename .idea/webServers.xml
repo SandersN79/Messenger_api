@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="7928c34f-4ac0-46d8-b348-eec9fc6b19c4" name="messenger" url="http://68.183.116.24">
+        <fileTransfer rootFolder="/home/nickdev" accessType="SFTP" host="68.183.116.24" port="22" sshConfigId="c7ff9d70-a335-465a-8dd1-779a676c5957" sshConfig="nickdev@68.183.116.24:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

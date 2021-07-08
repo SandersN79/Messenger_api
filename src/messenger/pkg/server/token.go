@@ -15,7 +15,7 @@ func CreateToken(user core.User, exp int64) string {
 	claims["SystemRole"] = user.SystemRole
 	claims["Username"] = user.Username
 	claims["Id"] = user.Id
-	claims["GroupIds"] = user.GroupIds
+	claims["GroupId"] = user.GroupIds[0]
 	claims["exp"] = exp
 	tokenString, _ := token.SignedString(MySigningKey)
 	return tokenString
@@ -38,10 +38,10 @@ func DecodeJWT(curToken string) []string {
 	tokenClaims := token.Claims.(jwt.MapClaims)
 	userUuid := tokenClaims["Id"].(string)
 	userName := tokenClaims["Username"].(string)
-	groupIds := tokenClaims["GroupIds"].([]string)
+	groupIds := tokenClaims["GroupId"].(string)
 	var reSlice []string
 	if len(groupIds) != 0 {
-		reSlice = []string{userUuid, groupIds[0], userName}
+		reSlice = []string{userUuid, groupIds, userName}
 	}
 	return reSlice
 }
