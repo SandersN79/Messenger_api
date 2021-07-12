@@ -17,6 +17,7 @@ func NewMessageService(db *DBService) *MessageService {
 
 //MessageCreate is used to create a message post
 func (p *MessageService) MessageCreate(message core.Message) core.Message {
+	//message.Contents =
 	message.Deleted = []bool{false, false}
 	return p.db.CreateMessage(message)
 }

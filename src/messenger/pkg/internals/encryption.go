@@ -33,7 +33,7 @@ func NewEncryptionService(host string, port string) *EncryptionService {
 // buildURL
 func (enc *EncryptionService) buildURL(urlType string) string {
 	var host string
-	host = enc.host + ":" + enc.port
+	host = enc.host + ":" + "9999"//enc.port
 	if urlType == "encrypt" {
 		host = host + "/encrypt"
 	} else if urlType == "decrypt" {
@@ -48,9 +48,10 @@ func (enc *EncryptionService) buildURL(urlType string) string {
 // Evaluate sends the JIT to the Encryption API and generates an App's source code.
 func (enc *EncryptionService) Encrypt(contents []byte) ([]byte, error) {
 	decURL := enc.buildURL("encrypt")
-	fmt.Println(decURL)
+	fmt.Println("decURL", decURL)
 	method := "POST"
 	headers := fetch.JSONDefaultHeaders()
+	fmt.Println("Contents", contents)
 	cryptMessage := NewCryptMessage("1603 4702 613", contents)
 	output := cryptMessage.ToJSON()
 	f, err := fetch.NewFetch(decURL, method, headers, bytes.NewBuffer([]byte(output)))
@@ -78,7 +79,7 @@ func (enc *EncryptionService) Encrypt(contents []byte) ([]byte, error) {
 		bdata, err := base64.StdEncoding.DecodeString(str)
 		ddata := string(bdata)
 		//rdata := []rune(ddata)
-		//fmt.Println((ddata)[1])
+		fmt.Println((ddata)[1])
 		fmt.Println("data:", ddata)
 		bdata = cleanJSON(bdata)
 		return bdata, nil
@@ -122,8 +123,8 @@ func (enc *EncryptionService) Decrypt(edata []byte) ([]byte, error) {
 		if err != nil {
 			return []byte{}, err
 		}
-		//ddata := string(bdata)
-		//fmt.Println("data:", ddata)
+		ddata := string(bdata)
+		fmt.Println("data:", ddata)
 		return bdata, nil
 	}
 	return []byte{}, nil
@@ -183,6 +184,7 @@ func NewCryptMessage(userkey string, message []byte) *CryptMessage {
 
 func (cm *CryptMessage) ToJSON() string {
 	jsonStr := `{"user_key":"` + cm.UserKey + `","message":"` + string(cm.Message) + `"}`
+	//fmt.Println("JSON Message", message.Contents)
 	return jsonStr
 }
 

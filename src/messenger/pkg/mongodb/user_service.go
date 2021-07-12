@@ -87,6 +87,7 @@ func (p *UserService) UserCreate(user core.User) core.User {
 		panic(err)
 	}
 	user.Id = curid.String()
+	user.UUserKey = core.KeyGen()
 	password := []byte(user.Password)
 	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	if err != nil {

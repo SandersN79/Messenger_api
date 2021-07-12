@@ -4,6 +4,7 @@ import (
 	core "MessengerDemo/src/messenger/pkg"
 	"MessengerDemo/src/messenger/pkg/internals"
 	"encoding/json"
+	"fmt"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"io"
@@ -123,6 +124,8 @@ func (m *messageRouter) MessageShow(w http.ResponseWriter, r *http.Request) {
 
 // Handler to create an message
 func (m *messageRouter) CreateMessage(w http.ResponseWriter, r *http.Request) {
+	//fmt.Println("w" , w)
+	//fmt.Println("r", r)
 	var message core.Message
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
@@ -138,6 +141,9 @@ func (m *messageRouter) CreateMessage(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 	}
+	//fmt.Println("Contents", Message.Contents)
+	fmt.Println("Body", body)
+	fmt.Println("message", string(message.Contents))
 	curid, err := uuid.NewV4()
 	if err != nil {
 		panic(err)
@@ -145,6 +151,7 @@ func (m *messageRouter) CreateMessage(w http.ResponseWriter, r *http.Request) {
 	message.Id = curid.String()
 	//TODO add encryption functionality below
 	eContents, err := m.encryptionService.Encrypt(message.Contents)
+	fmt.Println("econtents:", eContents)
 	if err !=  nil {
 		w = SetResponseHeaders(w, "", "")
 		w.WriteHeader(422)
