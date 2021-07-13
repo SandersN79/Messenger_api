@@ -90,10 +90,8 @@ func tokenVerifyMiddleWare(roleType string, next http.HandlerFunc,
 	fmt.Println("verifyMSG:", verifyMsg)
 	if verified {
 		if token.Valid && roleType == "Admin" {
-			// TODO IF ADMIN CHECK USER ROLE
 			next.ServeHTTP(w, r)
 		} else if token.Valid && roleType != "Admin" {
-			// TODO IF NON-ADMIN CHECK USER ROLE
 			next.ServeHTTP(w, r)
 		} else {
 			errorObject.Message = "Invalid Token"

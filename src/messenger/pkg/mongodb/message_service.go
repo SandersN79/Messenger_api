@@ -10,7 +10,7 @@ type MessageService struct {
 	db          *DBService
 }
 
-// NewMessageService is an exported function used to initialize a new GroupService struct
+// NewMessageService is an exported function used to initialize a new MessageService struct
 func NewMessageService(db *DBService) *MessageService {
 	return &MessageService{db}
 }
@@ -39,7 +39,7 @@ func (p *MessageService) MessageFind(message core.Message) core.Message {
 	return p.db.FindOneMessage(bson.D{{"Id", message.Id}})
 }
 
-//MessageUpdate is used to update the message
+//MessageUpdate is used to update a message
 func (p *MessageService) MessageUpdate(message core.Message) core.Message {
 	curMessage := p.db.FindOneMessage(bson.D{{"Id", message.Id}})
 	filter := bson.D{{"Id", curMessage.Id}}

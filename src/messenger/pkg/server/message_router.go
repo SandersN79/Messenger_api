@@ -124,6 +124,7 @@ func (m *messageRouter) MessageShow(w http.ResponseWriter, r *http.Request) {
 
 // Handler to create an message
 func (m *messageRouter) CreateMessage(w http.ResponseWriter, r *http.Request) {
+	//TODO Use w and r to pull token data for message bodies
 	//fmt.Println("w" , w)
 	//fmt.Println("r", r)
 	var smessage core.ScanMessage

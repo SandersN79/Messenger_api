@@ -40,19 +40,5 @@ func (s *Server) Start() {
 	if err := http.ListenAndServe(portStr, handlers.LoggingHandler(os.Stdout, s.Router)); err != nil {
 		log.Fatal("http.ListenAndServe: ", err)
 	}
-	/*
-	if s.Config.HTTPS == "on" {
-		log.Println("Listening on port " + s.Config.Port)
-		if err := http.ListenAndServeTLS(s.Config.GetPort(), s.Config.Cert, s.Config.Key, handlers.LoggingHandler(os.Stdout, s.Router)); err != nil {
-			log.Fatal("http.ListenAndServe: ", err)
-		}
-	} else {
-		log.Println("Listening on port " + s.Config.Port)
-		if err := http.ListenAndServe(s.Config.GetPort(), handlers.LoggingHandler(os.Stdout, s.Router)); err != nil {
-			log.Fatal("http.ListenAndServe: ", err)
-		}
-	}
-	*/
-
 }
 

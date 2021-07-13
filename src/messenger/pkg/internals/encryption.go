@@ -45,7 +45,7 @@ func (enc *EncryptionService) buildURL(urlType string) string {
 	return host
 }
 
-// Evaluate sends the JIT to the Encryption API and generates an App's source code.
+// Encrypt
 func (enc *EncryptionService) Encrypt(contents []byte) ([]byte, error) {
 	decURL := enc.buildURL("encrypt")
 	fmt.Println("decURL", decURL)
@@ -77,26 +77,26 @@ func (enc *EncryptionService) Encrypt(contents []byte) ([]byte, error) {
 		//fmt.Println("str:", str)
 
 		bdata, err := base64.StdEncoding.DecodeString(str)
-		ddata := string(bdata)
+		//ddata := string(bdata)
 		//rdata := []rune(ddata)
-		fmt.Println((ddata)[1])
-		fmt.Println("data:", ddata)
+		//fmt.Println((ddata)[1])
+		//fmt.Println("data:", ddata)
 		//bdata = cleanJSON(bdata)
 		return bdata, nil
 	}
 	return []byte(""), nil
 }
 
-// Evaluate sends the JIT to the Encryption API and generates an App's source code.
+// Sends the encrypted data back to the python to decrypt
 func (enc *EncryptionService) Decrypt(edata []byte) ([]byte, error) {
 	fmt.Println("decryption section \n")
 	decURL := enc.buildURL("decrypt")
 	method := "POST"
 	headers := fetch.JSONDefaultHeaders()
-	fmt.Println("edata123:", string(edata))
+	//fmt.Println("edata123:", string(edata))
 	cryptMessage := NewCryptMessage("1603 4702 613", edata)
 	output := cryptMessage.ToJSON()
-	fmt.Println("output:", output)
+	//fmt.Println("output:", output)
 	f, err := fetch.NewFetch(decURL, method, headers, bytes.NewBuffer([]byte(output)))
 	if err != nil {
 		fmt.Println("decryption Service Failed: ", err.Error())
@@ -156,7 +156,6 @@ func cleanJSON(eData []byte) []byte {
 		lastChar = string(eData[i])
 		count = count + 1
 	}
-	fmt.Println("BULLSHIT", string(reData))
 	return reData
 }
 
@@ -169,7 +168,7 @@ func loadMessageJSON(edata []byte) ([]byte, error) {
 	//fmt.Println("check1 ", string(byteMsg))
 	//byteMsg = bytes.Split(byteMsg, []byte(`"}`))[0]
 	byteMsg = cleanJSON(byteMsg)
-	fmt.Println("\ncheck2 ", string(byteMsg))
+	//fmt.Println("\ncheck2 ", string(byteMsg))
 	return byteMsg, nil
 }
 

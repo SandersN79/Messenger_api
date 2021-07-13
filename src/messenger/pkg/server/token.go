@@ -24,7 +24,7 @@ func CreateToken(user core.User, exp int64) string {
 // DecodeJWT is used to decode a JWT token
 func DecodeJWT(curToken string) []string {
 	var MySigningKey = []byte(os.Getenv("SECRET"))
-	// Decode token
+	// Decode the token
 	token, err := jwt.Parse(curToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("error")
@@ -34,7 +34,7 @@ func DecodeJWT(curToken string) []string {
 	if err != nil {
 		return []string{"", ""}
 	}
-	// Determine user based on token
+	// Determine user from token
 	tokenClaims := token.Claims.(jwt.MapClaims)
 	userUuid := tokenClaims["Id"].(string)
 	userName := tokenClaims["Username"].(string)

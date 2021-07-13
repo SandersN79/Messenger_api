@@ -38,7 +38,7 @@ func NewDBService(client *mongo.Client, dbName string) *DBService {
 /////////////////
 
 
-// FindOneUser Function to get a user from datasource with custom filter
+// FindOneUser finds a specfic user
 func (p *DBService) FindOneUser(filter bson.D) core.User {
 	var model = newUserModel(core.User{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -50,7 +50,7 @@ func (p *DBService) FindOneUser(filter bson.D) core.User {
 	return model.toRootUser()
 }
 
-// FindUsers Function to get a company from datasource with custom filter
+// FindUsers finds all users
 func (p *DBService) FindUsers(filter bson.D) []core.User {
 	var coreStructs []core.User
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -74,7 +74,7 @@ func (p *DBService) FindUsers(filter bson.D) []core.User {
 	return coreStructs
 }
 
-// CreateUser is used to create a new user user
+// CreateUser is used to create a new user
 func (p *DBService) CreateUser(coreStruct core.User) core.User {
 	var check = newUserModel(core.User{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -93,7 +93,7 @@ func (p *DBService) CreateUser(coreStruct core.User) core.User {
 	return model.toRootUser()
 }
 
-// UpdateUser is used to create a new user user
+// UpdateUser is used to update a user
 func (p *DBService) UpdateUser(update bson.D, filter bson.D) core.User {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -105,7 +105,7 @@ func (p *DBService) UpdateUser(update bson.D, filter bson.D) core.User {
 	return core.User{Username: "Success"}
 }
 
-// DeleteUser is used to create a new user user
+// DeleteUser is used to delete a user
 func (p *DBService) DeleteUser(filter bson.D) core.User {
 	var model = newUserModel(core.User{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -143,7 +143,7 @@ func (p *DBService) CountUsers(filter bson.D) int64 {
 ///////////////
 
 
-// FindOneGroup Function to get a group from datasource with custom filter
+// FindOneGroup finds one group
 func (p *DBService) FindOneGroup(filter bson.D) core.Group {
 	var model = newGroupModel(core.Group{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -155,7 +155,7 @@ func (p *DBService) FindOneGroup(filter bson.D) core.Group {
 	return model.toRootGroup()
 }
 
-// FindGroups Function to get a company from datasource with custom filter
+// FindGroups
 func (p *DBService) FindGroups(filter bson.D) []core.Group {
 	var coreStructs []core.Group
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -178,7 +178,7 @@ func (p *DBService) FindGroups(filter bson.D) []core.Group {
 	return coreStructs
 }
 
-// CreateGroup is used to create a new group group
+// CreateGroup is used to create a new group
 func (p *DBService) CreateGroup(coreStruct core.Group) core.Group {
 	var check = newGroupModel(core.Group{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -197,7 +197,7 @@ func (p *DBService) CreateGroup(coreStruct core.Group) core.Group {
 	return model.toRootGroup()
 }
 
-// UpdateGroup is used to create a new group group
+// UpdateGroup is used to update a group
 func (p *DBService) UpdateGroup(update bson.D, filter bson.D) core.Group {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -209,7 +209,7 @@ func (p *DBService) UpdateGroup(update bson.D, filter bson.D) core.Group {
 	return core.Group{Name: "Success"}
 }
 
-// DeleteGroup is used to create a new group group
+// DeleteGroup is used to delete a group
 func (p *DBService) DeleteGroup(filter bson.D) core.Group {
 	var model = newGroupModel(core.Group{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -246,7 +246,7 @@ func (p *DBService) CountGroups(filter bson.D) int64 {
 //////////////////////
 
 
-// FindOneMessage Function to get a message from datasource with custom filter
+// FindOneMessage Function to get a message
 func (p *DBService) FindOneMessage(filter bson.D) core.Message {
 	var model = newMessageModel(core.Message{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -258,7 +258,7 @@ func (p *DBService) FindOneMessage(filter bson.D) core.Message {
 	return model.toRootMessage()
 }
 
-// FindMessages Function to get a company from datasource with custom filter
+// FindMessages is used to find all messages related to user
 func (p *DBService) FindMessages(filter bson.D) []core.Message {
 	var coreStructs []core.Message
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -281,7 +281,7 @@ func (p *DBService) FindMessages(filter bson.D) []core.Message {
 	return coreStructs
 }
 
-// CreateMessage is used to create a new message message
+// CreateMessage is used to create a new message
 func (p *DBService) CreateMessage(coreStruct core.Message) core.Message {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -295,7 +295,7 @@ func (p *DBService) CreateMessage(coreStruct core.Message) core.Message {
 	return model.toRootMessage()
 }
 
-// UpdateMessage is used to create a new message message
+// UpdateMessage is used to update a message
 func (p *DBService) UpdateMessage(update bson.D, filter bson.D) core.Message {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -307,7 +307,7 @@ func (p *DBService) UpdateMessage(update bson.D, filter bson.D) core.Message {
 	return core.Message{Id: "Success"}
 }
 
-// DeleteMessage is used to create a new message message
+// DeleteMessage is used to delete a message
 func (p *DBService) DeleteMessage(filter bson.D) core.Message {
 	var model = newMessageModel(core.Message{})
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)

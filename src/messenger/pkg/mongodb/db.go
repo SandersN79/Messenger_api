@@ -8,7 +8,6 @@ import (
 	"time"
 )
 
-// DatabaseConn is a function that takes a mongoUri string and outputs a connected mongo client for the app to use
 func DatabaseConn(mongoUri string) (*mongo.Client, error) {
 	client, err := mongo.NewClient(options.Client().ApplyURI(mongoUri))
 	if err != nil {
