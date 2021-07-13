@@ -81,7 +81,7 @@ func (enc *EncryptionService) Encrypt(contents []byte) ([]byte, error) {
 		//rdata := []rune(ddata)
 		fmt.Println((ddata)[1])
 		fmt.Println("data:", ddata)
-		bdata = cleanJSON(bdata)
+		//bdata = cleanJSON(bdata)
 		return bdata, nil
 	}
 	return []byte(""), nil
@@ -93,7 +93,7 @@ func (enc *EncryptionService) Decrypt(edata []byte) ([]byte, error) {
 	decURL := enc.buildURL("decrypt")
 	method := "POST"
 	headers := fetch.JSONDefaultHeaders()
-	fmt.Println("edata:", string(edata))
+	fmt.Println("edata123:", string(edata))
 	cryptMessage := NewCryptMessage("1603 4702 613", edata)
 	output := cryptMessage.ToJSON()
 	fmt.Println("output:", output)
@@ -124,7 +124,7 @@ func (enc *EncryptionService) Decrypt(edata []byte) ([]byte, error) {
 			return []byte{}, err
 		}
 		ddata := string(bdata)
-		fmt.Println("data:", ddata)
+		fmt.Println("datadec:", ddata)
 		return bdata, nil
 	}
 	return []byte{}, nil
@@ -143,18 +143,20 @@ func cleanJSON(eData []byte) []byte {
 	lastChar := ""
 	count := 0
 	for i := len(eData)-1; i >= 0; i-- {
-		//fmt.Println(string(eData[i]))
+		//fmt.Println("STUFF", string(eData[i]))
 		if build {
 			reData = append([]byte{eData[i]}, reData...) // "}
 		}
 		if string(eData[i]) == `"` && lastChar == "}" {
 			if count < 5 {
+				fmt.Println("Build Is True")
 				build = true
 			}
 		}
 		lastChar = string(eData[i])
 		count = count + 1
 	}
+	fmt.Println("BULLSHIT", string(reData))
 	return reData
 }
 
@@ -164,7 +166,7 @@ func loadMessageJSON(edata []byte) ([]byte, error) {
 		return []byte(""), errors.New("error on line 60: byteSlice is empty")
 	}
 	byteMsg := byteSlice[1]
-	fmt.Println("check1 ", string(byteMsg))
+	//fmt.Println("check1 ", string(byteMsg))
 	//byteMsg = bytes.Split(byteMsg, []byte(`"}`))[0]
 	byteMsg = cleanJSON(byteMsg)
 	fmt.Println("\ncheck2 ", string(byteMsg))

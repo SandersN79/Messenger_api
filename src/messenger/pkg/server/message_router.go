@@ -126,7 +126,7 @@ func (m *messageRouter) MessageShow(w http.ResponseWriter, r *http.Request) {
 func (m *messageRouter) CreateMessage(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println("w" , w)
 	//fmt.Println("r", r)
-	var message core.Message
+	var smessage core.ScanMessage
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)
@@ -134,13 +134,15 @@ func (m *messageRouter) CreateMessage(w http.ResponseWriter, r *http.Request) {
 	if err := r.Body.Close(); err != nil {
 		panic(err)
 	}
-	if err := json.Unmarshal(body, &message); err != nil {
+	if err := json.Unmarshal(body, &smessage); err != nil {
 		w = SetResponseHeaders(w, "", "")
 		w.WriteHeader(422)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			panic(err)
 		}
 	}
+	message := smessage.ToScanMessage()
+
 	//fmt.Println("Contents", Message.Contents)
 	fmt.Println("Body", body)
 	fmt.Println("message", string(message.Contents))
@@ -151,7 +153,9 @@ func (m *messageRouter) CreateMessage(w http.ResponseWriter, r *http.Request) {
 	message.Id = curid.String()
 	//TODO add encryption functionality below
 	eContents, err := m.encryptionService.Encrypt(message.Contents)
-	fmt.Println("econtents:", eContents)
+	fmt.Println("econtents:", string(eContents))
+	deContents, err := m.encryptionService.Decrypt(eContents)
+	fmt.Println("decrypted data", string(deContents))
 	if err !=  nil {
 		w = SetResponseHeaders(w, "", "")
 		w.WriteHeader(422)
